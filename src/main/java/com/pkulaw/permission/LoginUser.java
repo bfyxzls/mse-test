@@ -1,5 +1,6 @@
 package com.pkulaw.permission;
 
+import com.pkulaw.config.UserContextHolder;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +19,15 @@ public class LoginUser {
     private String uuid;
 
     public boolean validPermission(String... permissions) {
-        logger.info("validPermission:{}", permissions);
-        return true;
+        if (roles != null) {
+            for (String role : roles.split(",")) {
+                for (String permission : permissions) {
+                    if (role.equals(permission)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 }

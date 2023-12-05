@@ -7,7 +7,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -35,7 +34,7 @@ public class HomeController {
         return Flux.just("call page");
     }
 
-    @GetMapping(value="/login", produces = MediaType.TEXT_HTML_VALUE)
+    @GetMapping(value = "/login", produces = MediaType.TEXT_HTML_VALUE)
     public Mono<String> login() throws IOException {
         String result =
                 "<html><head><title>登录页面</title></head><body><h1>登录页面</h1>" +

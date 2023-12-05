@@ -1,7 +1,7 @@
 package com.pkulaw.permission;
 
 import com.pkulaw.config.UserContextHolder;
-import org.apache.http.HttpException;
+import com.pkulaw.exception.AuthException;
 import org.apache.http.HttpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,25 +38,28 @@ public class PermissionFilter implements WebFilter {
             try {
                 String path = exchange.getRequest().getPath().value();
                 if (path.contains("/home/login")) {
-                    return chain.filter(exchange);
+                    // 如果是前端资源，则直接跳过，不做任何处理
+                    return exchange.getResponse().setComplete();
                 }
 
                 HandlerMethod method = (HandlerMethod) handler;
                 PermissionLimit permissionLimit = method.getMethodAnnotation(PermissionLimit.class);
                 if (permissionLimit == null) {
-                    return chain.filter(exchange);
+                    // 如果是前端资源，则直接跳过，不做任何处理
+                    return exchange.getResponse().setComplete();
                 }
+
                 boolean needAdminuser = permissionLimit.adminuser();
-                String[]   permissions = permissionLimit.permissions();
+                String[] permissions = permissionLimit.permissions();
                 LoginUser loginUser = UserContextHolder.get();
                 if (loginUser == null) {
-                    return redirectToNewUrl(exchange);
+                    return Mono.error(new AuthException("missing token", 401));
                 }
                 if (needAdminuser && loginUser.getRoles() != "1") {
-                    throw new HttpException("need_admin_user");
+                    return Mono.error(new AuthException("need admin user"));
                 }
                 if (!loginUser.validPermission(permissions)) {
-                    throw new HttpException("permission_forbidden");
+                    return Mono.error(new AuthException("permission forbidden"));
                 }
                 return chain.filter(exchange);
             } catch (Exception e) {
