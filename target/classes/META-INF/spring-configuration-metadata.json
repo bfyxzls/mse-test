@@ -1,0 +1,22 @@
+{
+  "groups": [
+    {
+      "name": "auth",
+      "type": "com.pkulaw.config.AuthProperties",
+      "sourceType": "com.pkulaw.config.AuthProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "auth.title",
+      "type": "java.lang.String",
+      "sourceType": "com.pkulaw.config.AuthProperties"
+    },
+    {
+      "name": "auth.version",
+      "type": "java.lang.String",
+      "sourceType": "com.pkulaw.config.AuthProperties"
+    }
+  ],
+  "hints": []
+}
